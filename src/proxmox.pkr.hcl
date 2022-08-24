@@ -74,7 +74,6 @@ build {
   provisioner "shell" {
     execute_command = "{{.Vars}} sudo -S -E sh -eux '{{.Path}}'"
     inline = [
-      "whoami",
       "apt-get update",
       "apt-get remove --purge apache2 apache2-utils -y",
       "apt-get install ca-certificates curl gnupg lsb-release -y",
