@@ -84,8 +84,8 @@ build {
       "$(lsb_release -cs) stable\" | tee /etc/apt/sources.list.d/docker.list > /dev/null",
       "apt-get update",
       "apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin -y",
-      "groupadd docker",
-      "sudo usermod -aG docker packer",
+      "groupadd docker || true",
+      "usermod -aG docker packer",
       "docker pull hello-world",
       "docker run -d --name hello-world hello-world",
       "openssl req -newkey rsa:4096 -x509 -sha256 -days 3650 -nodes -out /etc/ssl/nginx.crt -keyout /etc/ssl/nginx.key -subj '/C=RU/ST=Denial/L=Rostov-on-Don/O=CIB/CN=localhost'"
