@@ -36,7 +36,7 @@ source "proxmox-iso" "proxmox-debian-11" {
           "netcfg/get_nameservers=188.93.16.19 8.8.8.8 ",
           "netcfg/confirn_static=true <wait> ",
           "debian-installer/allow_unauthenticated_ssl=true ",
-          "preseed/url=https://raw.githubusercontent.com/Hexacosidedroid/packer-debian-example/master/src/http/preseed-debian.cfg <wait>",
+          "preseed/url=https://raw.githubusercontent.com/Hexacosidedroid/packer-docker-template-debian11/master/src/http/preseed-debian.cfg <wait>",
           "<enter><wait>"
         ]  
   boot_wait  = "2s"
@@ -72,18 +72,19 @@ source "proxmox-iso" "proxmox-debian-11" {
 build {
   sources = ["source.proxmox-iso.proxmox-debian-11"]
   provisioner "shell" {
-    execute_command = "echo 'packer' | {{.Vars}} sudo -S -E sh -eux '{{.Path}}'"
+    execute_command = "{{.Vars}} sudo -S -E sh -eux '{{.Path}}'"
     inline = [
       "whoami",
       "apt-get update",
       "apt-get remove --purge apache2 apache2-utils -y",
-      "apt-get install ca-certificates curl gnupg lsb-release",
+      "apt-get install ca-certificates curl gnupg lsb-release -y",
       "mkdir -p /etc/apt/keyrings",
       "curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg",
       "echo 'deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable' | tee /etc/apt/sources.list.d/docker.list > /dev/null",
       "apt-get update",
-      "apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin",
+      "apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin -y",
       "docker pull hello-world",
+      "docker run -d --name hello-world hello-world",
       "openssl req -newkey rsa:4096 -x509 -sha256 -days 3650 -nodes -out /etc/ssl/nginx.crt -keyout /etc/ssl/nginx.key -subj '/C=RU/ST=Denial/L=Rostov-on-Don/O=CIB/CN=localhost'"
     ]
   }
